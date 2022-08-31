@@ -8,6 +8,13 @@ plugins {
 android {
     compileSdk 32
 
+    applicationVariants.all { variants ->
+        variants.outputs.all {
+            buildConfigField("String", "BASE_URL", "\"http://newsapi.org/v2/\"")
+            buildConfigField("String", "API_KEY", "\"19b71eb781b0404b93feafc1badf4324\"")
+        }
+    }
+
     defaultConfig {
         applicationId "com.sample.technews"
         minSdk 27
