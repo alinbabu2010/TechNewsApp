@@ -20,9 +20,8 @@ class NewsRemoteDataSource @Inject constructor(
 ) : NewsApiSource {
 
     private val query = "tech"
-    private val pageSize = 10
 
-    override suspend fun getTechNews(page: Int): Resource<NewsApiResponse> {
+    override suspend fun getTechNews(page: Int, pageSize: Int): Resource<NewsApiResponse> {
         return newsApi.getTechNews(
             BuildConfig.API_KEY,
             query,
