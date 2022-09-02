@@ -5,5 +5,7 @@
     <string name="offline_message">Looks like you’re offline! Please connect to WiFi or cellular.</string>
     <string name="error_exception_message">The server responded with a malformed JSON text.\n\n[Response]%s</string>
     <string name="exception_message">The server response did not have any error details in it.\n\n[Response]%s</string>
+    <string name="try_again">Try again</string>
+    <string name="desc_article_image">Article image</string>
 
 </resources>
