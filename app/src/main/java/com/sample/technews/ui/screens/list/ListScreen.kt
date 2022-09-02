@@ -1,13 +1,25 @@
 package com.sample.technews.ui.screens.list
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.sample.technews.ui.theme.TechNewsTheme
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
+import coil.compose.rememberAsyncImagePainter
+import com.sample.technews.R
+import com.sample.technews.data.models.Article
+import com.sample.technews.ui.utils.*
 
 @Composable
 fun ListScreen(navController: NavHostController? = null) {
@@ -17,15 +29,85 @@ fun ListScreen(navController: NavHostController? = null) {
         color = MaterialTheme.colors.background
     ) {
 
+        val listViewModel: ListViewModel = hiltViewModel()
+        val lazyNewsItems: LazyPagingItems<Article> =
+            listViewModel.getArticles().collectAsLazyPagingItems()
+
+        LazyColumn {
+            items(lazyNewsItems) { article ->
+                NewsItem(article = article)
+            }
+
+            lazyNewsItems.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        item { LoadingView(modifier = Modifier.fillParentMaxSize()) }
+                    }
+                    loadState.append is LoadState.Loading -> {
+                        item { LoadingItem() }
+                    }
+                    loadState.refresh is LoadState.Error -> {
+                        val e = lazyNewsItems.loadState.refresh as LoadState.Error
+                        item {
+                            ErrorItem(
+                                message = e.error.localizedMessage!!,
+                                modifier = Modifier.fillParentMaxSize(),
+                                onClickRetry = { retry() }
+                            )
+                        }
+                    }
+                    loadState.append is LoadState.Error -> {
+                        val e = lazyNewsItems.loadState.append as LoadState.Error
+                        item {
+                            ErrorItem(
+                                message = e.error.localizedMessage!!,
+                                onClickRetry = { retry() }
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 
 }
 
-
-@Preview(showBackground = true)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun ListScreenPreview() {
-    TechNewsTheme {
-        ListScreen()
+fun NewsItem(article: Article?) {
+
+    Card(
+        shape = RoundedCornerShape(newsItemCardCornerSize),
+        onClick = { /*TODO*/ },
+        modifier = Modifier
+            .padding(
+                horizontal = newsImageCardHorizontalPadding,
+                vertical = newsImageCardVerticalPadding
+            )
+            .fillMaxWidth(),
+        backgroundColor = Color.LightGray
+    )
+
+    {
+        Column(Modifier.padding(newsImageCardVerticalPadding)) {
+
+            Image(
+                painter = rememberAsyncImagePainter(
+                    model = article?.urlToImage,
+                    contentScale = ContentScale.FillBounds
+                ),
+                contentDescription = stringResource(R.string.desc_article_image),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(newsImageHeight)
+            )
+
+            Text(text = article?.title ?: "", style = MaterialTheme.typography.h6)
+            Text(text = article?.author ?: "", style = MaterialTheme.typography.subtitle1)
+            Text(text = article?.publishedAt ?: "", style = MaterialTheme.typography.subtitle2)
+
+        }
     }
 }
