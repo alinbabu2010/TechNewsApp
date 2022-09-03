@@ -48,12 +48,11 @@ fun ErrorItem(
     ) {
         Text(
             text = message,
-            maxLines = 1,
             modifier = Modifier.weight(1F),
             style = MaterialTheme.typography.h6,
             color = Color.Red
         )
-        OutlinedButton(onClick = onClickRetry) {
+        OutlinedButton(onClick = onClickRetry, modifier = Modifier.padding(start = retryButtonStartPadding)) {
             Text(text = stringResource(R.string.try_again))
         }
     }

@@ -8,3 +8,4 @@ val newsImageCardHorizontalPadding = 16.dp
 val newsImageCardVerticalPadding = 8.dp
 val progressBarSize = 16.dp
 val errorItemPadding = 16.dp
+val retryButtonStartPadding = 2.dp
