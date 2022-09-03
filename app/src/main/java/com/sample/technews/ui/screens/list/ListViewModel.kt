@@ -15,7 +15,12 @@ class ListViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
 
-    fun getArticles() = Pager(PagingConfig(newsRepository.pageSize)) {
+    private val pagingConfig = PagingConfig(
+        pageSize = newsRepository.pageSize,
+        prefetchDistance = 1
+    )
+
+    fun getArticles() = Pager(pagingConfig) {
         NewsPagingSource(newsRepository)
     }.flow.cachedIn(viewModelScope)
 
