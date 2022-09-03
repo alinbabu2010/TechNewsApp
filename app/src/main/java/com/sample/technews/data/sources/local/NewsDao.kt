@@ -10,10 +10,10 @@ interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertArticles(articles: List<Article>)
 
-    @Delete
-    fun deleteArticles(articles: List<Article>)
+    @Query("DELETE FROM Article")
+    fun deleteArticles()
 
     @Query("SELECT * FROM Article")
-    fun getArticles(): Flow<List<Article>>
+    fun getArticles(): List<Article>
 
 }
