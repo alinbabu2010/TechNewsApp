@@ -29,11 +29,8 @@ class NewsPagingSource(
                 newsRepository.getArticlesList(nextPage)
             }) {
                 is Resource.Success -> {
-                    withContext(Dispatchers.IO) {
-                        newsRepository.addArticleToDb(newsResponse.data?.articles)
-                    }
                     LoadResult.Page(
-                        data = newsResponse.data?.articles ?: emptyList(),
+                        data = newsResponse.data ?: emptyList(),
                         prevKey = if (nextPage == 1) null else nextPage - 1,
                         nextKey = if (nextPage < 10) nextPage + 1 else null
                     )
