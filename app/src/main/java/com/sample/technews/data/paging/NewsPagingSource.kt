@@ -1,4 +1,4 @@
-package com.sample.technews.data.sources
+package com.sample.technews.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
