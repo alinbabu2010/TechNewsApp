@@ -17,6 +17,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.sample.technews.R
 import com.sample.technews.data.models.Article
 import com.sample.technews.ui.utils.*
@@ -33,39 +35,54 @@ fun ListScreen(navController: NavHostController? = null) {
         val lazyNewsItems: LazyPagingItems<Article> =
             listViewModel.getArticles().collectAsLazyPagingItems()
 
-        LazyColumn {
-            items(lazyNewsItems) { article ->
-                NewsItem(article = article)
-            }
+        val swipeRefreshState = rememberSwipeRefreshState(false)
 
-            lazyNewsItems.apply {
-                when {
-                    loadState.refresh is LoadState.Loading -> {
-                        item { LoadingView(modifier = Modifier.fillParentMaxSize()) }
-                    }
-                    loadState.append is LoadState.Loading -> {
-                        item { LoadingItem() }
-                    }
-                    loadState.refresh is LoadState.Error -> {
-                        val e = lazyNewsItems.loadState.refresh as LoadState.Error
-                        item {
-                            ErrorItem(
-                                message = e.error.localizedMessage!!,
-                                modifier = Modifier.fillParentMaxSize(),
-                                onClickRetry = { retry() }
-                            )
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = {
+                lazyNewsItems.refresh()
+                swipeRefreshState.isRefreshing = true
+            }
+        ) {
+
+            LazyColumn {
+                items(lazyNewsItems) { article ->
+                    NewsItem(article = article)
+                }
+
+                lazyNewsItems.apply {
+                    when {
+                        loadState.refresh is LoadState.Loading -> {
+                            item { LoadingView(modifier = Modifier.fillParentMaxSize()) }
                         }
-                    }
-                    loadState.append is LoadState.Error -> {
-                        val e = lazyNewsItems.loadState.append as LoadState.Error
-                        item {
-                            ErrorItem(
-                                message = e.error.localizedMessage!!,
-                                onClickRetry = { retry() }
-                            )
+                        loadState.append is LoadState.Loading -> {
+                            item { LoadingItem() }
+                        }
+                        loadState.refresh is LoadState.Error -> {
+                            val e = lazyNewsItems.loadState.refresh as LoadState.Error
+                            item {
+                                ErrorItem(
+                                    message = e.error.localizedMessage!!,
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    onClickRetry = { retry() }
+                                )
+                            }
+                        }
+                        loadState.append is LoadState.Error -> {
+                            val e = lazyNewsItems.loadState.append as LoadState.Error
+                            item {
+                                ErrorItem(
+                                    message = e.error.localizedMessage!!,
+                                    onClickRetry = { retry() }
+                                )
+                            }
+                        }
+                        loadState.source.refresh is LoadState.NotLoading -> {
+                            swipeRefreshState.isRefreshing = false
                         }
                     }
                 }
+
             }
 
         }
@@ -96,8 +113,8 @@ fun NewsItem(article: Article?) {
             Image(
                 painter = rememberAsyncImagePainter(
                     model = article?.urlToImage,
-                    contentScale = ContentScale.FillBounds
                 ),
+                contentScale = ContentScale.FillBounds,
                 contentDescription = stringResource(R.string.desc_article_image),
                 modifier = Modifier
                     .fillMaxWidth()
