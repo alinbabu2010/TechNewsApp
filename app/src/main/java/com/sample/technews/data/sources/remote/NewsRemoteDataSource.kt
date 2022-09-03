@@ -70,7 +70,6 @@ class NewsRemoteDataSource @Inject constructor(
             } else {
 
                 responseCode = response.code()
-                responseMsg = response.message()
 
                 /*
                 Retrofit currently doesn't convert its `errorBody` to JSON. We need to do that
@@ -85,6 +84,8 @@ class NewsRemoteDataSource @Inject constructor(
                     )
                 }.getOrNull()
 
+                responseMsg = errorResponse?.message ?: response.message()
+
                 when (errorResponse) {
                     null -> throw java.lang.Exception(
                         if (BuildConfig.DEBUG)
@@ -93,7 +94,7 @@ class NewsRemoteDataSource @Inject constructor(
                     )
                     else -> throw java.lang.Exception(
                         if (BuildConfig.DEBUG)
-                            context.getString(R.string.exception_message, errorBody)
+                            responseMsg.ifBlank { context.getString(R.string.exception_message, errorBody) }
                         else serverErrorMsg
                     )
                 }
@@ -113,7 +114,7 @@ class NewsRemoteDataSource @Inject constructor(
             Resource.Error(
                 Throwable(
                     if (BuildConfig.DEBUG)
-                        "$responseCode: $responseMsg\n\n[Error Details]\n${e.localizedMessage}"
+                        "$responseCode: ${ responseMsg.ifBlank { e.localizedMessage }}"
                     else serverErrorMsg
                 )
             )
