@@ -20,7 +20,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.sample.technews.R
-import com.sample.technews.data.models.Article
+import com.sample.technews.domain.model.ArticleInfo
 import com.sample.technews.ui.utils.*
 
 @Composable
@@ -32,7 +32,7 @@ fun ListScreen(navController: NavHostController? = null) {
     ) {
 
         val listViewModel: ListViewModel = hiltViewModel()
-        val lazyNewsItems: LazyPagingItems<Article> =
+        val lazyNewsItems: LazyPagingItems<ArticleInfo> =
             listViewModel.getArticles().collectAsLazyPagingItems()
 
         val swipeRefreshState = rememberSwipeRefreshState(false)
@@ -93,7 +93,7 @@ fun ListScreen(navController: NavHostController? = null) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NewsItem(article: Article?) {
+fun NewsItem(article: ArticleInfo?) {
 
     Card(
         shape = RoundedCornerShape(newsItemCardCornerSize),
