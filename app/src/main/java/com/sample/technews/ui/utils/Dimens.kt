@@ -17,6 +17,7 @@ val retryButtonStartPadding = 2.dp
 
 val detailsColumnPadding = 16.dp
 val detailsImageCornerSize = 4.dp
+val detailsAuthorTopPadding = 8.dp
 val detailsTextTopPadding = 4.dp
-val detailsDescTextTopPadding = 8.dp
-val detailsDescFontSize = 18.sp
+val detailsDescTextTopPadding = 16.dp
+val detailsDescFontSize = 20.sp

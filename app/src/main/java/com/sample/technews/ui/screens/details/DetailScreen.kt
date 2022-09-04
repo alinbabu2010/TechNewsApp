@@ -55,14 +55,14 @@ fun DetailScreen(articleInfo: ArticleInfo) {
 
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.h4,
                     modifier = Modifier.padding(top = detailsTextTopPadding)
                 )
 
                 Text(
                     text = stringResource(R.string.author, author.toString()),
                     style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier.padding(top = detailsTextTopPadding)
+                    modifier = Modifier.padding(top = detailsAuthorTopPadding)
                 )
 
                 Text(
