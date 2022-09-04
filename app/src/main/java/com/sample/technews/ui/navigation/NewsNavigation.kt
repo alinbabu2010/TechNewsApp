@@ -2,22 +2,36 @@
 
 package com.sample.technews.ui.navigation
 
+import android.net.Uri
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
+import androidx.navigation.NavHostController
+import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.gson.Gson
+import com.sample.technews.domain.model.ArticleInfo
 import com.sample.technews.ui.screens.details.DetailScreen
 import com.sample.technews.ui.screens.list.ListScreen
+
+const val NAV_ARG = "ARTICLE_INFO"
+
+enum class NewsScreens {
+    LIST_SCREEN,
+    DETAIL_SCREEN
+}
+
+private lateinit var navController : NavHostController
 
 @Composable
 fun NewsNavigation() {
 
-    val navController = rememberAnimatedNavController()
+    navController = rememberAnimatedNavController()
     val springSpec = spring<IntOffset>(dampingRatio = 2F)
 
     AnimatedNavHost(
@@ -38,19 +52,25 @@ fun NewsNavigation() {
 
 
         composable(NewsScreens.LIST_SCREEN.name) {
-            ListScreen(navController)
+            ListScreen()
         }
 
-        composable(NewsScreens.DETAIL_SCREEN.name) {
-            DetailScreen()
+        val route = "${NewsScreens.DETAIL_SCREEN.name}/{${NAV_ARG}}"
+        composable(route = route, arguments = listOf(
+            navArgument(NAV_ARG) {
+                this.type = ArticleInfoType()
+            }
+        )) { navBackStackEntry ->
+            val articleInfo = navBackStackEntry.arguments?.getParcelable<ArticleInfo>(NAV_ARG)
+            articleInfo?.let { DetailScreen(it) }
         }
-
 
     }
 
 }
 
-enum class NewsScreens {
-    LIST_SCREEN,
-    DETAIL_SCREEN
+fun navigateToDetails(articleInfo: ArticleInfo) {
+    val article = Uri.encode(Gson().toJson(articleInfo))
+    val route = "${NewsScreens.DETAIL_SCREEN.name}/$article"
+    navController.navigate(route)
 }
