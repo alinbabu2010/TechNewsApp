@@ -29,7 +29,7 @@ enum class NewsScreens {
     DETAIL_SCREEN
 }
 
-private lateinit var navController : NavHostController
+private lateinit var navController: NavHostController
 
 @Composable
 fun NewsNavigation() {

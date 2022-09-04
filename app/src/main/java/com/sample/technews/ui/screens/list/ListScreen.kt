@@ -41,7 +41,7 @@ fun ListScreen(lazyNewsItems: LazyPagingItems<ArticleInfo>) {
 
             LazyColumn {
                 items(lazyNewsItems) { article ->
-                    NewsItem(article = article){
+                    NewsItem(article = article) {
                         navigateToDetails(it)
                     }
                 }
@@ -89,7 +89,7 @@ fun ListScreen(lazyNewsItems: LazyPagingItems<ArticleInfo>) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NewsItem(article: ArticleInfo?,onItemClick:(ArticleInfo) -> Unit) {
+fun NewsItem(article: ArticleInfo?, onItemClick: (ArticleInfo) -> Unit) {
 
     Card(
         shape = RoundedCornerShape(newsItemCardCornerSize),

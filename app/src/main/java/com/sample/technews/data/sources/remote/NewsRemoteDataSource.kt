@@ -94,7 +94,12 @@ class NewsRemoteDataSource @Inject constructor(
                     )
                     else -> throw java.lang.Exception(
                         if (BuildConfig.DEBUG)
-                            responseMsg.ifBlank { context.getString(R.string.exception_message, errorBody) }
+                            responseMsg.ifBlank {
+                                context.getString(
+                                    R.string.exception_message,
+                                    errorBody
+                                )
+                            }
                         else serverErrorMsg
                     )
                 }
@@ -114,7 +119,7 @@ class NewsRemoteDataSource @Inject constructor(
             Resource.Error(
                 Throwable(
                     if (BuildConfig.DEBUG)
-                        "$responseCode: ${ responseMsg.ifBlank { e.localizedMessage }}"
+                        "$responseCode: ${responseMsg.ifBlank { e.localizedMessage }}"
                     else serverErrorMsg
                 )
             )
