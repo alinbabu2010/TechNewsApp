@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -21,10 +20,11 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.sample.technews.R
 import com.sample.technews.domain.model.ArticleInfo
+import com.sample.technews.ui.navigation.navigateToDetails
 import com.sample.technews.ui.utils.*
 
 @Composable
-fun ListScreen(navController: NavHostController? = null) {
+fun ListScreen() {
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -47,7 +47,9 @@ fun ListScreen(navController: NavHostController? = null) {
 
             LazyColumn {
                 items(lazyNewsItems) { article ->
-                    NewsItem(article = article)
+                    NewsItem(article = article){
+                        navigateToDetails(it)
+                    }
                 }
 
                 lazyNewsItems.apply {
@@ -93,11 +95,11 @@ fun ListScreen(navController: NavHostController? = null) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NewsItem(article: ArticleInfo?) {
+fun NewsItem(article: ArticleInfo?,onItemClick:(ArticleInfo) -> Unit) {
 
     Card(
         shape = RoundedCornerShape(newsItemCardCornerSize),
-        onClick = { /*TODO*/ },
+        onClick = { article?.let { onItemClick(it) } },
         modifier = Modifier
             .padding(
                 horizontal = newsImageCardHorizontalPadding,
