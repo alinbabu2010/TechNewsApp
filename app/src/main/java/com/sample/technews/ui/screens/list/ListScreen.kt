@@ -104,7 +104,7 @@ fun NewsItem(article: ArticleInfo?, onItemClick: (ArticleInfo) -> Unit) {
     )
 
     {
-        Column(Modifier.padding(newsImageCardVerticalPadding)) {
+        Column(Modifier.padding(bottom = newsColumnBottomPadding)) {
 
             Image(
                 painter = rememberAsyncImagePainter(
@@ -115,11 +115,27 @@ fun NewsItem(article: ArticleInfo?, onItemClick: (ArticleInfo) -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(newsImageHeight)
+                    .padding(bottom = newsImageBottomPadding)
             )
 
-            Text(text = article?.title ?: "", style = MaterialTheme.typography.h6)
-            Text(text = article?.author ?: "", style = MaterialTheme.typography.subtitle1)
-            Text(text = article?.publishedAt ?: "", style = MaterialTheme.typography.subtitle2)
+            Text(
+                text = article?.title ?: "",
+                style = MaterialTheme.typography.h6,
+                color = Color.Blue,
+                modifier = Modifier.padding(horizontal = newsTextHorizontalPadding)
+            )
+            Text(
+                text = article?.source ?: "",
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier.padding(horizontal = newsTextHorizontalPadding)
+            )
+            Text(
+                text = article?.publishedAt ?: "",
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.subtitle2,
+                modifier = Modifier.padding(horizontal = newsTextHorizontalPadding)
+            )
 
         }
     }
