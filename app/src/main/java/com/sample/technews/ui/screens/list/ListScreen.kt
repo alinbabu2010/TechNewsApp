@@ -10,10 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -24,16 +22,12 @@ import com.sample.technews.ui.navigation.navigateToDetails
 import com.sample.technews.ui.utils.*
 
 @Composable
-fun ListScreen() {
+fun ListScreen(lazyNewsItems: LazyPagingItems<ArticleInfo>) {
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
     ) {
-
-        val listViewModel: ListViewModel = hiltViewModel()
-        val lazyNewsItems: LazyPagingItems<ArticleInfo> =
-            listViewModel.getArticles().collectAsLazyPagingItems()
 
         val swipeRefreshState = rememberSwipeRefreshState(false)
 

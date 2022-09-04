@@ -9,8 +9,10 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.navArgument
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -18,6 +20,7 @@ import com.google.gson.Gson
 import com.sample.technews.domain.model.ArticleInfo
 import com.sample.technews.ui.screens.details.DetailScreen
 import com.sample.technews.ui.screens.list.ListScreen
+import com.sample.technews.ui.screens.list.ListViewModel
 
 const val NAV_ARG = "ARTICLE_INFO"
 
@@ -33,6 +36,9 @@ fun NewsNavigation() {
 
     navController = rememberAnimatedNavController()
     val springSpec = spring<IntOffset>(dampingRatio = 2F)
+
+    val listViewModel: ListViewModel = hiltViewModel()
+    val lazyNewsItems = listViewModel.getArticles().collectAsLazyPagingItems()
 
     AnimatedNavHost(
         navController = navController,
@@ -52,7 +58,7 @@ fun NewsNavigation() {
 
 
         composable(NewsScreens.LIST_SCREEN.name) {
-            ListScreen()
+            ListScreen(lazyNewsItems)
         }
 
         val route = "${NewsScreens.DETAIL_SCREEN.name}/{${NAV_ARG}}"
