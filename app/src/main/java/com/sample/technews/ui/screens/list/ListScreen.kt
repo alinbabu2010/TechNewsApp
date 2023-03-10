@@ -20,12 +20,11 @@ import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
 import com.sample.technews.R
 import com.sample.technews.domain.model.ArticleInfo
-import com.sample.technews.ui.navigation.navigateToDetails
 import com.sample.technews.ui.utils.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ListScreen(lazyNewsItems: LazyPagingItems<ArticleInfo>) {
+fun ListScreen(lazyNewsItems: LazyPagingItems<ArticleInfo>, onItemClicked: (ArticleInfo) -> Unit) {
 
     var isRefreshing by remember { mutableStateOf(false) }
 
@@ -44,7 +43,7 @@ fun ListScreen(lazyNewsItems: LazyPagingItems<ArticleInfo>) {
             LazyColumn {
                 items(lazyNewsItems) { article ->
                     NewsItem(article = article) {
-                        navigateToDetails(it)
+                        onItemClicked(it)
                     }
                 }
 

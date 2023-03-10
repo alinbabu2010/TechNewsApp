@@ -3,6 +3,7 @@
 package com.sample.technews.ui.navigation
 
 import android.net.Uri
+import android.os.Build
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideInHorizontally
@@ -10,7 +11,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.navArgument
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -29,12 +29,10 @@ enum class NewsScreens {
     DETAIL_SCREEN
 }
 
-private lateinit var navController: NavHostController
-
 @Composable
 fun NewsNavigation() {
 
-    navController = rememberAnimatedNavController()
+    val navController = rememberAnimatedNavController()
     val springSpec = spring<IntOffset>(dampingRatio = 2F)
 
     val listViewModel: ListViewModel = hiltViewModel()
@@ -58,7 +56,11 @@ fun NewsNavigation() {
 
 
         composable(NewsScreens.LIST_SCREEN.name) {
-            ListScreen(lazyNewsItems)
+            ListScreen(lazyNewsItems) {
+                val article = Uri.encode(Gson().toJson(it))
+                val route = "${NewsScreens.DETAIL_SCREEN.name}/$article"
+                navController.navigate(route)
+            }
         }
 
         val route = "${NewsScreens.DETAIL_SCREEN.name}/{${NAV_ARG}}"
@@ -67,16 +69,15 @@ fun NewsNavigation() {
                 this.type = ArticleInfoType()
             }
         )) { navBackStackEntry ->
-            val articleInfo = navBackStackEntry.arguments?.getParcelable<ArticleInfo>(NAV_ARG)
+            val articleInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                navBackStackEntry.arguments?.getParcelable(NAV_ARG, ArticleInfo::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                navBackStackEntry.arguments?.getParcelable(NAV_ARG)
+            }
             articleInfo?.let { DetailScreen(it) }
         }
 
     }
 
-}
-
-fun navigateToDetails(articleInfo: ArticleInfo) {
-    val article = Uri.encode(Gson().toJson(articleInfo))
-    val route = "${NewsScreens.DETAIL_SCREEN.name}/$article"
-    navController.navigate(route)
 }
