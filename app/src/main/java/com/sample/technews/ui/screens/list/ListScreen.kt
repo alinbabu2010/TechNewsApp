@@ -5,7 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -14,30 +18,28 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.sample.technews.R
 import com.sample.technews.domain.model.ArticleInfo
 import com.sample.technews.ui.navigation.navigateToDetails
 import com.sample.technews.ui.utils.*
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListScreen(lazyNewsItems: LazyPagingItems<ArticleInfo>) {
+
+    var isRefreshing by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
     ) {
 
-        val swipeRefreshState = rememberSwipeRefreshState(false)
+        val swipeRefreshState = rememberPullRefreshState(isRefreshing, onRefresh = {
+            lazyNewsItems.refresh()
+            isRefreshing = true
+        })
 
-        SwipeRefresh(
-            state = swipeRefreshState,
-            onRefresh = {
-                lazyNewsItems.refresh()
-                swipeRefreshState.isRefreshing = true
-            }
-        ) {
+        Box(Modifier.pullRefresh(swipeRefreshState)) {
 
             LazyColumn {
                 items(lazyNewsItems) { article ->
@@ -74,12 +76,18 @@ fun ListScreen(lazyNewsItems: LazyPagingItems<ArticleInfo>) {
                             }
                         }
                         loadState.source.refresh is LoadState.NotLoading -> {
-                            swipeRefreshState.isRefreshing = false
+                            isRefreshing = false
                         }
                     }
                 }
 
             }
+
+            PullRefreshIndicator(
+                isRefreshing,
+                swipeRefreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
 
         }
 
